@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/bus_website/static/css/main.073c9b0a.css",
+    "main.js": "/bus_website/static/js/main.f980fd75.js",
+    "index.html": "/bus_website/index.html",
+    "main.073c9b0a.css.map": "/bus_website/static/css/main.073c9b0a.css.map",
+    "main.f980fd75.js.map": "/bus_website/static/js/main.f980fd75.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.073c9b0a.css",
+    "static/js/main.f980fd75.js"
+  ]
+}
