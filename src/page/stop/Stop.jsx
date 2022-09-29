@@ -8,7 +8,7 @@ const Stop = () => {
     const [stop_list, setStopList] = useState()
     ///////////// Call Api////////////
     useEffect(() => {
-        getStopList(setStopList,);
+        getStopList(setStopList);
     }, [])
 
     if (!stop_list) return
