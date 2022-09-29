@@ -20,6 +20,7 @@ const Home = () => {
             const OSMUrl = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 
             Leaflet.tileLayer(OSMUrl).addTo(mymap);
+            
             const redIcon = new Leaflet.Icon({
                 iconUrl:
                     "https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
@@ -40,7 +41,7 @@ const Home = () => {
                 popupAnchor: [1, -34],
                 shadowSize: [41, 41]
             });
-
+            console.log(typeof blueIcon);
             const marker = Leaflet.marker([my_latitude, my_longitude], { icon: blueIcon }).addTo(
                 mymap
             );
