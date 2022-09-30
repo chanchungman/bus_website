@@ -1,6 +1,6 @@
 import { React, useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom';
-import getBusList from '../../service/getBusList'
+import getBusList from '../../service/api/getBusList'
 
 
 const Bus = () => {

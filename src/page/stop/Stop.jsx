@@ -1,6 +1,6 @@
 import { React, useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom';
-import getStopList from '../../service/getStopList'
+import getStopList from '../../service/api/getStopList'
 
 
 const Stop = () => {

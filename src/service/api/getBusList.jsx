@@ -1,4 +1,4 @@
-export default async function getBusList(setBusList, type, urlParams) {
+export default async function getBusList(setBusList, type, urlParams, values = null) {
     let url;
     let bound;
     let route;
@@ -17,11 +17,14 @@ export default async function getBusList(setBusList, type, urlParams) {
         case 'bus':
             url = 'https://data.etabus.gov.hk/v1/transport/kmb/route-stop/' + route + '/' + bound + '/1';
             break;
+        case 'bus_by_stop':
+            url = 'https://data.etabus.gov.hk/v1/transport/kmb/stop-eta/'+values;
+            break;
         default:
             console.log('404')
     }
 
-    if(url){
+    if (url) {
         const response = await fetch(url, {
             method: 'GET',
             headers: {
@@ -31,15 +34,20 @@ export default async function getBusList(setBusList, type, urlParams) {
         const data = await response.json();
 
         ///check user have search bus////
-        if(search_query){
-            const filter =  Object.values(data.data).filter(e =>
+        if (search_query) {
+            const filter = Object.values(data.data).filter(e =>
                 e['route'] == search_query
             )
             const result = { generated_timestamp: data.generated_timestamp, data: filter }
             setBusList(result)
         }
+        ///check value ////
+        if (values) {
+            Object.assign(data, {values: values});
+            setBusList(data)
+        }
         ////show all/////
-        else{
+        else {
             setBusList(data)
         }
 

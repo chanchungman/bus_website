@@ -1,7 +1,7 @@
 import { React, useState, useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom';
-import getBusList from '../../service/getBusList'
-import getStopList from '../../service/getStopList'
+import getBusList from '../../service/api/getBusList'
+import getStopList from '../../service/api/getStopList'
 
 function BusDetails() {
     const [bus_list, setBusList] = useState();

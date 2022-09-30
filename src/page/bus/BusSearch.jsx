@@ -1,6 +1,6 @@
 import { React, useState, useEffect } from 'react'
 import { Link,useSearchParams } from 'react-router-dom';
-import getBusList from '../../service/getBusList'
+import getBusList from '../../service/api/getBusList'
 
 
 const BusSearch = () => {
