@@ -42,7 +42,7 @@ export default async function getBusList(setBusList, type, urlParams, values = n
             setBusList(result)
         }
         ///check value ////
-        if (values) {
+        else if (values!=null) {
             Object.assign(data, {values: values});
             setBusList(data)
         }
