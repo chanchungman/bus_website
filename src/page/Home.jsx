@@ -20,6 +20,7 @@ const Home = () => {
 
 
     async function createMap(position) {
+        console.log('start')
         const stop_data = stop_list['data']
         let mymap;
         let my_latitude = 22.305208;
@@ -90,20 +91,20 @@ const Home = () => {
         else {
             let marker = document.querySelector("img[title='location_marker']")
             let mymap = { map_data };
-            //console.log(marker)
             
              if(marker != null)return
                 marker = L.setLatLng([my_latitude, my_longitude])
         }
     }
-
+    useEffect(() => {
         const timer = setTimeout(() => 
             (stop_list.length === 0) ?
             getStopList(setStopList)
             :
-            navigator.geolocation.watchPosition(createMap, createMap)
+            navigator.geolocation.watchPosition(createMap,createMap)
           , 1000);
-
+          return () => clearTimeout(timer);
+        }, [stop_list,location]);
 
     setInterval(() => {
         if (bus_list) {
