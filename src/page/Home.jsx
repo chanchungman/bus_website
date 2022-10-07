@@ -10,16 +10,9 @@ const Home = () => {
     const [bus_list, setBusList] = useState(null)
     const [stop_list, setStopList] = useState([])
     const [location, setLocation] = useState([])
-
+    let time;
 
     /// map///
-
-    // navigator.geolocation.watchPosition(function (position) {
-
-    //     const my_latitude = position.coords.latitude;
-    //     const my_longitude = position.coords.longitude;
-    //     setLocation([my_latitude,my_longitude])
-    // });
 
 
 
@@ -77,7 +70,6 @@ const Home = () => {
             if ((min_lat <= meter && min_lat >= -(meter)) && (min_long <= meter && min_long >= -(meter))) {
                 const stop = Leaflet.marker([e.lat, e.long], { icon: redIcon, myCustomId: e.stop }).on('click', function (e) {
                     getBusList(setBusList, 'bus_by_stop', null, e['sourceTarget']['options']['myCustomId']);
-                    console.log(e['sourceTarget']['options']['myCustomId']);
                 }).addTo(mymap);
                 const r = GetDistance(my_latitude, my_longitude, e.lat, e.long)
                 stop.bindPopup(e.name_tc + '<br />' + r + 'm')
@@ -94,7 +86,7 @@ const Home = () => {
     }, [stop_list]);
 
     setInterval(() => {
-
+        console.log(bus_list)
         getBusList(setBusList, 'bus_by_stop', null, bus_list.values)
     }, 60000);
     return (
@@ -108,18 +100,21 @@ const Home = () => {
                 <div>
                     {
                         bus_list.data.map((e, index) => {
-                            return index != 0 ?
+                            time = parseInt((new Date(e.eta).getTime() - new Date().getTime()) / 1000 / 60)
+                            var time_result = time+'分鐘 '
+                            return  index != 0 ?
                                 bus_list.data[index - 1].route != e.route ?
                                     <div>
-                                        {e.route} : {parseInt((new Date(e.eta).getTime() - new Date().getTime()) / 1000 / 60)}分鐘 {/*到站需時*/}
+                                        <hr/>
+                                        {e.route} : {time >=0 ? time_result: '尾班車已過'}  {/*到站需時*/}
                                     </div>
                                     :
                                     <div>
-                                        {parseInt((new Date(e.eta).getTime() - new Date().getTime()) / 1000 / 60)}分鐘 {/*到站需時*/}
+                                       ------{time>=0? time_result: '尾班車已過'}{/*到站需時*/}
                                     </div>
                                 :
                                 <div>
-                                    {e.route} : {parseInt((new Date(e.eta).getTime() - new Date().getTime()) / 1000 / 60)}分鐘 {/*到站需時*/}
+                                    {e.route} : {time>=0? time: '尾班車已過'} {/*到站需時*/}
                                 </div>
                         })}
                 </div>
