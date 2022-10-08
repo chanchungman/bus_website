@@ -10,7 +10,7 @@ const Home = () => {
     const [bus_list, setBusList] = useState(null)
     const [stop_list, setStopList] = useState([])
     const [location, setLocation] = useState([])
-    const [map_data, setMapData] = useState()
+    const [marker_data, setMarkerData] = useState()
     let time;
 
     /// map///
@@ -20,7 +20,6 @@ const Home = () => {
 
 
     async function createMap(position) {
-        console.log('start')
         const stop_data = stop_list['data']
         let mymap;
         let my_latitude = 22.305208;
@@ -71,8 +70,8 @@ const Home = () => {
             L.tileLayer(OSMUrl).addTo(mymap);
 
             const marker = L.marker([my_latitude, my_longitude], { icon: blueIcon, title: 'location_marker' }).addTo(mymap);
+            setMarkerData([marker])
             marker.bindPopup('Here').openPopup()
-            setMapData([mymap])
             stop_data.map(e => {
                 const min_lat = e.lat - my_latitude;
                 const min_long = e.long - my_longitude;
@@ -88,23 +87,25 @@ const Home = () => {
                 }
             })
         }
-        else {
-            let marker = document.querySelector("img[title='location_marker']")
-            let mymap = { map_data };
-            
-             if(marker != null)return
-                marker = L.setLatLng([my_latitude, my_longitude])
+        else if(position['message'] != "User denied Geolocation") {
+            ////update user location////
+            let marker = {marker_data}
+            marker = marker['marker_data'][0];
+            if (marker != null) {
+                var newLatLng = new L.LatLng(my_latitude, my_longitude);
+                marker.setLatLng(newLatLng).update(); 
+            }
         }
     }
     useEffect(() => {
-        const timer = setTimeout(() => 
+        const timer = setTimeout(() =>
             (stop_list.length === 0) ?
-            getStopList(setStopList)
-            :
-            navigator.geolocation.watchPosition(createMap,createMap)
-          , 1000);
-          return () => clearTimeout(timer);
-        }, [stop_list,location]);
+                getStopList(setStopList)
+                :
+                navigator.geolocation.watchPosition(createMap, createMap)
+            , 1000);
+        return () => clearTimeout(timer);
+    }, [stop_list, location]);
 
     setInterval(() => {
         if (bus_list) {
