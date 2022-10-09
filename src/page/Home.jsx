@@ -5,7 +5,7 @@ import L from "leaflet";
 import getBusList from '../service/api/getBusList'
 import getStopList from '../service/api/getStopList'
 import GetDistance from '../service/function/GetDistance'
-
+import 'leaflet-rotatedmarker';
 const Home = () => {
     const [bus_list, setBusList] = useState(null)
     const [stop_list, setStopList] = useState([])
@@ -24,6 +24,7 @@ const Home = () => {
         let mymap;
         let my_latitude = 22.305208;
         let my_longitude = 114.188859;
+        let heading = 0;
         const redIcon = new L.Icon({
             iconUrl:
                 "https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
@@ -42,15 +43,17 @@ const Home = () => {
             iconSize: [25, 41],
             iconAnchor: [12, 41],
             popupAnchor: [1, -34],
-            shadowSize: [41, 41]
+            shadowSize: [41, 41],
         });
         if (position['message'] != "User denied Geolocation") {
             my_latitude = position['coords']['latitude']
             my_longitude = position['coords']['longitude']
-
+            if (position['coords']['heading']) {
+                heading = position['coords']['heading']
+            }
         }
 
-        setLocation([my_latitude, my_longitude])
+        setLocation([my_latitude, my_longitude, heading])
         ///----------------map-------------------///
 
         ///check map is already initialized///
@@ -87,13 +90,15 @@ const Home = () => {
                 }
             })
         }
-        else if(position['message'] != "User denied Geolocation") {
+        else if (position['message'] != "User denied Geolocation") {
             ////update user location////
-            let marker = {marker_data}
+            let marker = { marker_data }
             marker = marker['marker_data'][0];
             if (marker != null) {
                 var newLatLng = new L.LatLng(my_latitude, my_longitude);
-                marker.setLatLng(newLatLng).update(); 
+                marker.setLatLng(newLatLng).update();
+                console.log(heading)
+                marker.setRotationAngle(heading);
             }
         }
     }
@@ -103,7 +108,7 @@ const Home = () => {
                 getStopList(setStopList)
                 :
                 navigator.geolocation.watchPosition(createMap, createMap)
-            , 1000);
+            , 500);
         return () => clearTimeout(timer);
     }, [stop_list, location]);
 
@@ -118,6 +123,8 @@ const Home = () => {
             {location[0]}
             <br />
             {location[1]}
+            <br />
+            {location[2]}
             <div id="mapid" style={{ height: "50vh", width: "100vw" }} />
 
             {bus_list ?
