@@ -1,0 +1,21 @@
+.dark{
+    background-color: rgba(30, 35, 64);
+}
+.bus_list{
+    background-color: rgba(40, 45, 77);
+}
+.bus_list_title{
+    color: rgb(255, 255, 255);
+    font-weight: bold;
+}
+.time_div{
+    text-align: right ; 
+}
+.time{
+    font-weight: bold;
+    
+}
+
+div{
+    color: #5fd9f5
+}

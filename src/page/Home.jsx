@@ -6,18 +6,17 @@ import getBusList from '../service/api/getBusList'
 import getStopList from '../service/api/getStopList'
 import GetDistance from '../service/function/GetDistance'
 import 'leaflet-rotatedmarker';
+
 const Home = () => {
+    const [onclick_stop, setOnclickStop] = useState()
     const [bus_list, setBusList] = useState(null)
     const [stop_list, setStopList] = useState([])
     const [location, setLocation] = useState([])
     const [marker_data, setMarkerData] = useState()
+    const [stop_titile, setStopTitle] = useState()
     let time;
 
     /// map///
-
-
-
-
 
     async function createMap(position) {
         const stop_data = stop_list['data']
@@ -81,9 +80,10 @@ const Home = () => {
                 const meter = 0.0045;
                 /////方圓500米內車站////
                 if ((min_lat <= meter && min_lat >= -(meter)) && (min_long <= meter && min_long >= -(meter))) {
-                    const stop = L.marker([e.lat, e.long], { icon: redIcon, myCustomId: e.stop }).on('click', function (e) {
-                        getBusList(setBusList, 'bus_by_stop', null, e['sourceTarget']['options']['myCustomId']);
-                        console.log(e['sourceTarget']['options']['myCustomId'])
+                    const stop = L.marker([e.lat, e.long], { icon: redIcon, myCustomId: e.stop }).on('click', function (e_stop) {
+                        getBusList(setBusList, 'bus_by_stop', null, e_stop['sourceTarget']['options']['myCustomId']);
+                        setOnclickStop(e.name_tc)
+                        console.log(e_stop['sourceTarget']['options']['myCustomId'])
                     }).addTo(mymap);
                     const r = GetDistance(my_latitude, my_longitude, e.lat, e.long)
                     stop.bindPopup(e.name_tc + '<br />' + r + 'm')
@@ -97,7 +97,6 @@ const Home = () => {
             if (marker != null) {
                 var newLatLng = new L.LatLng(my_latitude, my_longitude);
                 marker.setLatLng(newLatLng).update();
-                console.log(heading)
                 marker.setRotationAngle(heading);
             }
         }
@@ -120,38 +119,37 @@ const Home = () => {
     }, 60000);///set bus data per 1 min
     return (
         <div>
+            <p>
             {location[0]}
             <br />
             {location[1]}
             <br />
             {location[2]}
+            </p>
             <div id="mapid" style={{ height: "50vh", width: "100vw" }} />
-
             {bus_list ?
-                <div>
+                <div className='bus_list'>
+                    <p className='bus_list_title'>
+                        {onclick_stop}
+                    </p>
                     {
                         bus_list.data.map((e, index) => {
                             time = parseInt((new Date(e.eta).getTime() - new Date().getTime()) / 1000 / 60)
-                            var time_result = time + '分鐘 '
-                            return index != 0 ?
-                                bus_list.data[index - 1].route != e.route ?
-                                    <div>
-                                        <hr />
-                                        {e.route} : {time >= 0 ? time_result : '尾班車已過'}  {/*到站需時*/}
-                                    </div>
-                                    :
-                                    <div>
-                                        ------{time >= 0 ? time_result : '尾班車已過'}{/*到站需時*/}
-                                    </div>
-                                :
-                                <div>
-                                    {e.route} : {time >= 0 ? time_result : '尾班車已過'} {/*到站需時*/}
-                                </div>
-                        })}
+
+                            return <div>
+                                <b>{index == 0 ||bus_list.data[index - 1].route != e.route ? <div><hr/>{e.route}</div> : ''}</b>
+                                <div className='time_div'>
+                                        <b>{time >= 0 ? time : '尾班車已過'}</b>
+                                            <br/>
+                                            <p>mins</p>
+                                </div> {/*到站需時*/}
+                            </div>
+                        })
+                    }
+                    <hr />
                 </div>
                 :
                 (<p>no</p>)
-
             }
 
             <br />
@@ -166,7 +164,8 @@ const Home = () => {
             }}>
                 stop
             </Link>
-        </div>)
+        </div>
+    )
 }
 
 export default Home

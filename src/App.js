@@ -8,6 +8,7 @@ import Head from './components/Head';
 import SearchBar from './components/SearchBar';
 import BusSearch from './page/bus/BusSearch';
 import Stop from './page/stop/Stop';
+import './components/myStyles.css';
 function App() {
   return (
     <BrowserRouter>
