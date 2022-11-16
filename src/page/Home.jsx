@@ -21,8 +21,8 @@ const Home = () => {
     async function createMap(position) {
         const stop_data = stop_list['data']
         let mymap;
-        let my_latitude = 22.305208;
-        let my_longitude = 114.188859;
+        let my_latitude = 22.337104;
+        let my_longitude = 114.148698;
         let heading = 0;
         const redIcon = new L.Icon({
             iconUrl:
@@ -83,6 +83,7 @@ const Home = () => {
                 if ((min_lat <= meter && min_lat >= -(meter)) && (min_long <= meter && min_long >= -(meter))) {
                     const stop = L.marker([e.lat, e.long], { icon: redIcon, myCustomId: e.stop }).on('click', function (e_stop) {
                         BusApi(e_stop['sourceTarget']['options']['myCustomId'])
+                        console.log(e_stop['sourceTarget']['options']['myCustomId'])
                         setOnclickStop(e.name_tc)
                         //console.log(e_stop['sourceTarget']['options']['myCustomId'])
                     }).addTo(mymap);
@@ -149,7 +150,7 @@ const Home = () => {
 
                             return <div>
                                     <b>
-                                    {index == 0 || bus_list.data[index - 1].route != e.route ? 
+                                    {index == 0 || bus_list.data[index - 1].route != e.route || bus_list.data[index - 1].dest_tc != e.dest_tc? 
                                         <div>
                                         <hr/>
                                             <div className='bus_title'>
