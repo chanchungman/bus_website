@@ -1,5 +1,5 @@
-import { React, useState, useEffect, useContext } from 'react'
-import { Link } from 'react-router-dom';
+import { React, useState, useEffect, useContext , useRef } from 'react'
+import { json, Link } from 'react-router-dom';
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import getBusList from '../service/api/getBusList'
@@ -9,11 +9,11 @@ import 'leaflet-rotatedmarker';
 
 const Home = () => {
     const [onclick_stop, setOnclickStop] = useState()
+    var onclick_stop_id = useRef(null)
     const [bus_list, setBusList] = useState(null)
     const [stop_list, setStopList] = useState([])
     const [location, setLocation] = useState([])
     const [marker_data, setMarkerData] = useState()
-    const [stop_titile, setStopTitle] = useState()
     let time;
 
     /// map///
@@ -44,6 +44,7 @@ const Home = () => {
             popupAnchor: [1, -34],
             shadowSize: [41, 41],
         });
+
         if (position['message'] != "User denied Geolocation") {
             my_latitude = position['coords']['latitude']
             my_longitude = position['coords']['longitude']
@@ -81,9 +82,9 @@ const Home = () => {
                 /////方圓500米內車站////
                 if ((min_lat <= meter && min_lat >= -(meter)) && (min_long <= meter && min_long >= -(meter))) {
                     const stop = L.marker([e.lat, e.long], { icon: redIcon, myCustomId: e.stop }).on('click', function (e_stop) {
-                        getBusList(setBusList, 'bus_by_stop', null, e_stop['sourceTarget']['options']['myCustomId']);
+                        BusApi(e_stop['sourceTarget']['options']['myCustomId'])
                         setOnclickStop(e.name_tc)
-                        console.log(e_stop['sourceTarget']['options']['myCustomId'])
+                        //console.log(e_stop['sourceTarget']['options']['myCustomId'])
                     }).addTo(mymap);
                     const r = GetDistance(my_latitude, my_longitude, e.lat, e.long)
                     stop.bindPopup(e.name_tc + '<br />' + r + 'm')
@@ -93,14 +94,23 @@ const Home = () => {
         else if (position['message'] != "User denied Geolocation") {
             ////update user location////
             let marker = { marker_data }
-            marker = marker['marker_data'][0];
-            if (marker != null) {
-                var newLatLng = new L.LatLng(my_latitude, my_longitude);
-                marker.setLatLng(newLatLng).update();
-                marker.setRotationAngle(heading);
+            if(marker['marker_data']){
+                marker = marker['marker_data'][0]
+                if (marker != null) {
+                    var newLatLng = new L.LatLng(my_latitude, my_longitude);
+                    marker.setLatLng(newLatLng).update();
+                    marker.setRotationAngle(heading);
+                }
             }
         }
     }
+
+    function BusApi(id){
+        getBusList(setBusList, 'bus_by_stop', null, id);
+        onclick_stop_id.current=id
+
+    }
+
     useEffect(() => {
         const timer = setTimeout(() =>
             (stop_list.length === 0) ?
@@ -112,11 +122,12 @@ const Home = () => {
     }, [stop_list, location]);
 
     setInterval(() => {
-        if (bus_list) {
-            getBusList(setBusList, 'bus_by_stop', null, bus_list.values)
+        if(bus_list) {
+            console.log(onclick_stop_id.current)
+            BusApi(onclick_stop_id.current)
         }
-
     }, 60000);///set bus data per 1 min
+
     return (
         <div>
             <p>
@@ -137,11 +148,25 @@ const Home = () => {
                             time = parseInt((new Date(e.eta).getTime() - new Date().getTime()) / 1000 / 60)
 
                             return <div>
-                                <b>{index == 0 ||bus_list.data[index - 1].route != e.route ? <div><hr/>{e.route}</div> : ''}</b>
+                                    <b>
+                                    {index == 0 || bus_list.data[index - 1].route != e.route ? 
+                                        <div>
+                                        <hr/>
+                                            <div className='bus_title'>
+                                                {e.route} ➪ {e.dest_tc}
+                                            </div>
+                                        </div> : ''}
+                                    </b>
                                 <div className='time_div'>
-                                        <b>{time >= 0 ? time : '尾班車已過'}</b>
-                                            <br/>
-                                            <p>mins</p>
+                                        <b>{
+                                            time >= 0 ?
+                                            <div>
+                                                {time}                                           
+                                                <br/>
+                                                <p>mins</p>
+                                            </div> : '尾班車已過'
+                                        }</b>
+  
                                 </div> {/*到站需時*/}
                             </div>
                         })
