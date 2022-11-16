@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/bus_website/static/css/main.d15e4ba7.css",
-    "main.js": "/bus_website/static/js/main.59bff4ce.js",
+    "main.js": "/bus_website/static/js/main.1c46a364.js",
     "index.html": "/bus_website/index.html",
     "main.d15e4ba7.css.map": "/bus_website/static/css/main.d15e4ba7.css.map",
-    "main.59bff4ce.js.map": "/bus_website/static/js/main.59bff4ce.js.map"
+    "main.1c46a364.js.map": "/bus_website/static/js/main.1c46a364.js.map"
   },
   "entrypoints": [
     "static/css/main.d15e4ba7.css",
-    "static/js/main.59bff4ce.js"
+    "static/js/main.1c46a364.js"
   ]
 }
