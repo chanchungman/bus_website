@@ -6,14 +6,15 @@ import getBusList from '../service/api/getBusList'
 import getStopList from '../service/api/getStopList'
 import GetDistance from '../service/function/GetDistance'
 import 'leaflet-rotatedmarker';
-
+import { FaRunning, FaBus } from "react-icons/fa";
 const Home = () => {
     const [onclick_stop, setOnclickStop] = useState()
-    var onclick_stop_id = useRef(null)
     const [bus_list, setBusList] = useState(null)
     const [stop_list, setStopList] = useState([])
     const [location, setLocation] = useState([])
     const [marker_data, setMarkerData] = useState()
+    var onclick_stop_id = useRef(null)
+    var distance = useRef(null)
     let time;
 
     /// map///
@@ -74,21 +75,21 @@ const Home = () => {
 
             const marker = L.marker([my_latitude, my_longitude], { icon: blueIcon, title: 'location_marker' }).addTo(mymap);
             setMarkerData([marker])
-            marker.bindPopup('Here').openPopup()
+            marker.bindPopup('<div class=popup_text>Here</div>').openPopup()
             stop_data.map(e => {
                 const min_lat = e.lat - my_latitude;
                 const min_long = e.long - my_longitude;
-                const meter = 0.0045;
-                /////方圓500米內車站////
+                const meter = 0.009;
+                /////方圓1000米內車站////
                 if ((min_lat <= meter && min_lat >= -(meter)) && (min_long <= meter && min_long >= -(meter))) {
                     const stop = L.marker([e.lat, e.long], { icon: redIcon, myCustomId: e.stop }).on('click', function (e_stop) {
                         BusApi(e_stop['sourceTarget']['options']['myCustomId'])
                         console.log(e_stop['sourceTarget']['options']['myCustomId'])
                         setOnclickStop(e.name_tc)
-                        //console.log(e_stop['sourceTarget']['options']['myCustomId'])
+                        distance.current = GetDistance(my_latitude, my_longitude, e.lat, e.long)+ 'm'
                     }).addTo(mymap);
-                    const r = GetDistance(my_latitude, my_longitude, e.lat, e.long)
-                    stop.bindPopup(e.name_tc + '<br />' + r + 'm')
+                    distance.current = GetDistance(my_latitude, my_longitude, e.lat, e.long)+ 'm'
+                    stop.bindPopup('<div class=popup_text>'+e.name_tc + '<br />' + distance.current +'</div>')
                 }
             })
         }
@@ -109,7 +110,6 @@ const Home = () => {
     function BusApi(id){
         getBusList(setBusList, 'bus_by_stop', null, id);
         onclick_stop_id.current=id
-
     }
 
     useEffect(() => {
@@ -124,7 +124,6 @@ const Home = () => {
 
     setInterval(() => {
         if(bus_list) {
-            console.log(onclick_stop_id.current)
             BusApi(onclick_stop_id.current)
         }
     }, 60000);///set bus data per 1 min
@@ -141,9 +140,11 @@ const Home = () => {
             <div id="mapid" style={{ height: "50vh", width: "100vw" }} />
             {bus_list ?
                 <div className='bus_list'>
-                    <p className='bus_list_title'>
+                    <div className='bus_list_title'>
                         {onclick_stop}
-                    </p>
+                        <br/>
+                        <FaRunning />{distance.current}
+                    </div>
                     {
                         bus_list.data.map((e, index) => {
                             time = parseInt((new Date(e.eta).getTime() - new Date().getTime()) / 1000 / 60)
@@ -154,7 +155,7 @@ const Home = () => {
                                         <div>
                                         <hr/>
                                             <div className='bus_title'>
-                                                {e.route} ➪ {e.dest_tc}
+                                                <FaBus/> {e.route} ➪ {e.dest_tc}
                                             </div>
                                         </div> : ''}
                                     </b>
@@ -162,10 +163,13 @@ const Home = () => {
                                         <b>{
                                             time >= 0 ?
                                             <div>
-                                                {time}                                           
-                                                <br/>
-                                                <p>mins</p>
-                                            </div> : '尾班車已過'
+                                                {time}                                       
+                                                <label className='mins'> mins</label>
+                                            </div>  
+                                            :
+                                            <div>
+                                                尾班車已過  
+                                            </div>
                                         }</b>
   
                                 </div> {/*到站需時*/}

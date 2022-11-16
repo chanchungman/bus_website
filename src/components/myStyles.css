@@ -7,6 +7,7 @@
 .bus_list_title{
     color: rgb(255, 255, 255);
     font-weight: bold;
+    padding-left: 50px;
 }
 .bus_title{
     padding-left: 50px;
@@ -18,6 +19,13 @@
 .time{
     font-weight: bold;
 }
+.popup_text{
+    color:black
+}
+.mins{
+    font-size: 0.1em;
+}
+
 div{
     color: #5fd9f5
 }
