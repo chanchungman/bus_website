@@ -22,8 +22,8 @@ const Home = () => {
     async function createMap(position) {
         const stop_data = stop_list['data']
         let mymap;
-        let my_latitude = 22.337104;
-        let my_longitude = 114.148698;
+        let my_latitude = 22.339976;
+        let my_longitude = 114.189506;
         let heading = 0;
         const redIcon = new L.Icon({
             iconUrl:
@@ -88,8 +88,7 @@ const Home = () => {
                         setOnclickStop(e.name_tc)
                         distance.current = GetDistance(my_latitude, my_longitude, e.lat, e.long)+ 'm'
                     }).addTo(mymap);
-                    distance.current = GetDistance(my_latitude, my_longitude, e.lat, e.long)+ 'm'
-                    stop.bindPopup('<div class=popup_text>'+e.name_tc + '<br />' + distance.current +'</div>')
+                    stop.bindPopup('<div class=popup_text>'+e.name_tc + '<br /></div>')
                 }
             })
         }
@@ -167,11 +166,11 @@ const Home = () => {
                                                 <label className='mins'> mins</label>
                                             </div>  
                                             :
-                                            <div>
-                                                尾班車已過  
+                                            <div>{e.rmk_tc !='原定班次' && e.rmk_tc ?
+                                                    e.rmk_tc : '尾班車已過'
+                                                }  
                                             </div>
                                         }</b>
-  
                                 </div> {/*到站需時*/}
                             </div>
                         })
@@ -179,9 +178,8 @@ const Home = () => {
                     <hr />
                 </div>
                 :
-                (<p>no</p>)
+                ('')
             }
-
             <br />
             <Link to={{
                 pathname: "/bus_website/bus_data",
