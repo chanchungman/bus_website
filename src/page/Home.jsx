@@ -167,7 +167,7 @@ const Home = () => {
                                             </div>  
                                             :
                                             <div>{e.rmk_tc !='原定班次' && e.rmk_tc ?
-                                                    e.rmk_tc : '尾班車已過'
+                                                    e.rmk_tc : '沒有服務'
                                                 }  
                                             </div>
                                         }</b>
